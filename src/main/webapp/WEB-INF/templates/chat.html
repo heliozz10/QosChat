@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello WebSocket</title>
+    <link href="/css/main.css" data-th-href="@{/css/main.css}" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <script src="/js/app.js" data-th-src="@{/js/app.js}"></script>
+</head>
+<body>
+<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
+    enabled. Please enable
+    Javascript and reload this page!</h2></noscript>
+<div class="wrapper">
+    <div class="row-container">
+        <form style="display: contents;">
+            <input type="text" id="chat-id-box" name="chat-id" placeholder="Enter a chat ID...">
+            <button id="connect" type="submit" class="connection-button">Connect</button>
+            <button id="disconnect" type="submit" class="connection-button" disabled="disabled">Disconnect</button>
+        </form>
+    </div>
+    <div class="row-container">
+        <form style="display: contents;">
+            <input type="text" name="message-box" id="message-box" placeholder="Send a message...">
+            <button id="send" type="submit" class="send-button">Send</button>
+        </form>
+    </div>
+    <div class="chat" id="chat">
+        <div class="message">
+            <div class="message-info">
+                <div class="username">
+                    <h1>???</h1>
+                </div>
+                <div class="date">
+                    <h1>12/12/2012 44:44:44</h1>
+                </div>
+            </div>
+            <div class="message-contents">
+                <p>
+                    
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
