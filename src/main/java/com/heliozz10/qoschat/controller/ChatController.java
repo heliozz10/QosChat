@@ -17,12 +17,12 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 @Controller
 public class ChatController {
@@ -41,17 +41,24 @@ public class ChatController {
         this.template = template;
     }
 
-    @PostMapping(value = "/create-chat")
+    @GetMapping("/chat-exists")
+    @ResponseBody
+    public Map<String, Boolean> checkIfChatExists(@RequestParam long id) {
+        return Map.of("chatExists", chatService.isChatPresent(id));
+    }
+
+    @PostMapping("/create-chat")
     public ResponseEntity<NewChatResponse> createChat(NewChatRequest request) {
         LOGGER.info(request.getName());
         Chat chat = chatService.createChatAndSave(request.getName());
         return ResponseEntity.ok(new NewChatResponse(chat.getId()));
     }
 
-    @MessageMapping("/send-message/")
-    public void handleChatMessage(ClientChatMessage message, Principal principal) {
+    @MessageMapping("/send-message/{chatId}")
+    @SendTo("/topic/chat/{chatId}")
+    public ServerChatMessage handleChatMessage(ClientChatMessage message, Principal principal) {
         LOGGER.info(message.getContents());
         LOGGER.info(principal.getName());
-        template.convertAndSend("/topic/chat/" + 1, new ServerChatMessage(new Sender(principal.getName()), message.getContents(), MESSAGE_DATE_FORMAT.format(new Date())));
+        return new ServerChatMessage(new Sender(principal.getName()), message.getContents(), MESSAGE_DATE_FORMAT.format(new Date()));
     }
 }

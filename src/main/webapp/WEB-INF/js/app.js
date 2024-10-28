@@ -42,7 +42,11 @@ function setConnected(connected) {
 
 function connect() {
     currentChatId = $("#chat-id-box").val();
-    stompClient.activate();
+    $.get("/chat-exists?id=" + currentChatId, response => {
+        if(response.chatExists) {
+            stompClient.activate();
+        }
+    });
 }
 
 function disconnect() {
@@ -72,7 +76,7 @@ function createChat() {
 
 function sendMessage() {
     stompClient.publish({
-        destination: "/app/send-message/",
+        destination: "/app/send-message/" + currentChatId,
         body: JSON.stringify({'contents': $("#message-box").val()})
     });
 }
