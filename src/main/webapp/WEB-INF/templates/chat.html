@@ -1,10 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hello WebSocket</title>
+    <title>QosChat</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-param" content="_csrf">
+    <meta name="csrf-token" content="javascript:getCookieValue('XSRF-TOKEN');">
     <link href="/css/main.css" data-th-href="@{/css/main.css}" rel="stylesheet">
+    <link href="/css/chat.css" data-th-href="@{/css/chat.css}" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
     <script src="/js/app.js" data-th-src="@{/js/app.js}"></script>
 </head>
 <body>
@@ -13,34 +19,28 @@
     Javascript and reload this page!</h2></noscript>
 <div class="wrapper">
     <div class="row-container">
-        <form style="display: contents;">
+        <form style="display: contents;" autocomplete="off">
             <input type="text" id="chat-id-box" name="chat-id" placeholder="Enter a chat ID...">
-            <button id="connect" type="submit" class="connection-button">Connect</button>
-            <button id="disconnect" type="submit" class="connection-button" disabled="disabled">Disconnect</button>
+            <button id="connect" type="submit" class="connect-button">Connect</button>
+            <button id="disconnect" type="submit" class="connect-button" disabled="disabled">Disconnect</button>
         </form>
     </div>
     <div class="row-container">
-        <form style="display: contents;">
-            <input type="text" name="message-box" id="message-box" placeholder="Send a message...">
+        <form style="display: contents;" autocomplete="off">
+            <input type="text" id="chat-name-box" name="chat-name" placeholder="Enter a chat name to create...">
+            <button id="create-chat" type="submit" class="create-chat-button">Create chat and join</button>
+        </form>
+    </div>
+    <div class="row-container">
+        <form style="display: contents;" autocomplete="off">
+            <input type="text" name="message-box" id="message-box" placeholder="Send a message..." value="">
             <button id="send" type="submit" class="send-button">Send</button>
         </form>
     </div>
+    <div class="row-container" id="current-chat-name-container">
+        <h1 id="current-chat-name">bro</h1>
+    </div>
     <div class="chat" id="chat">
-        <div class="message">
-            <div class="message-info">
-                <div class="username">
-                    <h1>???</h1>
-                </div>
-                <div class="date">
-                    <h1>12/12/2012 44:44:44</h1>
-                </div>
-            </div>
-            <div class="message-contents">
-                <p>
-                    
-                </p>
-            </div>
-        </div>
     </div>
 </div>
 </body>

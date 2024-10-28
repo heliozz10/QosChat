@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Register</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/main.css" data-th-href="@{/css/main.css}" rel="stylesheet">
+    <link href="/css/register.css" data-th-href="@{/css/register.css}" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="/js/register.js" data-th-src="@{/js/register.js}"></script>
+</head>
+<body>
+    <div class="wrapper">
+        <form data-th-action="@{/register}" action="/register" method="POST" id="register-form" autocomplete="off">
+            <input type="text" name="username" id="username" placeholder="Username...">
+            <input type="password" name="password" id="password" placeholder="Password...">
+            <input type="submit" name="register" id="register" value="Register">
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+.wrapper {
+    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#register-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#register-form input {
+    height: 32px;
+}
+
+#register-form input[type=text], #register-form input[type=password] {
+    padding-left: 10px;
+    width: 320px;
+    height: 32px;
+    margin-bottom: 16px;
+}
+
+#register-form input[type=submit] {
+    width: 120px;
+}

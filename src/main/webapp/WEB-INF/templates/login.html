@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/main.css" data-th-href="@{/css/main.css}" rel="stylesheet">
+    <link href="/css/login.css" data-th-href="@{/css/login.css}" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="/js/login.js" data-th-src="@{/js/login.js}"></script>
+</head>
+<body>
+    <div class="wrapper">
+        <form data-th-action="@{/login}" action="/login" method="POST" id="login-form" autocomplete="off">
+            <input type="text" name="username" id="username" placeholder="Username...">
+            <input type="password" name="password" id="password" placeholder="Password...">
+            <input type="submit" name="login" id="login" value="Login">
+        </form>
+    </div>
+</body>
+</html>

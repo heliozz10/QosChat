@@ -14,10 +14,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ServerChatMessage {
-    /**
-     * Chat UUID represented in string format
-     */
-    private String chatId;
     private Sender sender;
     private String contents;
     /**

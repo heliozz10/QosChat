@@ -1,0 +1,90 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.row-container {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    padding: 20px 0px;
+    padding-left: 20px;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(0, 0, 0, 0.2);
+}
+
+#chat-id-box, #chat-name-box, #message-box {
+    height: 30px;
+}
+
+#chat-name-box {
+    width: 300px;
+}
+
+.connect-button, .create-chat-button, .send-button {
+    padding: 5px;
+}
+
+#current-chat-name-container {
+    display: none;
+}
+
+.chat {
+    max-height: 600px;
+    margin-top: 40px;
+    overflow-y: scroll;
+}
+
+.message {
+    display: flex;
+    flex-direction: column;
+    border-top-style: solid;
+    border-bottom-style: solid;
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0.2);
+    margin-bottom: 10px;
+}
+
+.message-info {
+    display: flex;
+    flex-direction: row;
+    background-color: #baf4ff;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(0, 0, 0, 0.2);
+}
+
+.username {
+    padding-left: 20px;
+    width: 120px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.username > h1 {
+    font-size: 24px;
+}
+
+.date {
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.date > h1 {
+    font-size: 16px;
+    color: #777777;
+}
+
+.message-contents {
+    background-color: #d4f8ff;
+    padding: 20px;
+    padding-right: 0;
+}
+
+.message-contents > p {
+    word-break: break-all;
+    white-space: normal;
+}

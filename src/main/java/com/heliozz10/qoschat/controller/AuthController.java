@@ -1,33 +1,41 @@
 package com.heliozz10.qoschat.controller;
 
-import com.heliozz10.qoschat.security.PasswordlessAuthProvider;
+import com.heliozz10.qoschat.dto.UserDto;
+import com.heliozz10.qoschat.entity.User;
+import com.heliozz10.qoschat.repository.UserRepository;
+import com.heliozz10.qoschat.security.AuthProvider;
+import com.heliozz10.qoschat.service.UserService;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class AuthController {
-    private PasswordlessAuthProvider authProvider;
+    private final UserService userService;
 
-    public AuthController(PasswordlessAuthProvider authProvider) {
-        this.authProvider = authProvider;
+    public AuthController(UserRepository userRepo, UserService userService, AuthProvider authProvider) {
+        this.userService = userService;
     }
 
-    @GetMapping("/set-name")
-    public String setName(HttpServletRequest request, @RequestParam String name) {
-        SecurityContext sc = SecurityContextHolder.getContext();
-        final UserDetails user = new User(name, "", AuthorityUtils.createAuthorityList("ROLE_USER"));
-        sc.setAuthentication(new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities()));
-        request.getSession(true).setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
-        return "redirect:/";
+    @GetMapping("/login")
+    public String login() {
+        return "login.html";
+    }
+
+    @GetMapping("/register")
+    public String register() {
+        return "register.html";
+    }
+
+    @PostMapping("/register")
+    public String registerPost(UserDto userDto, HttpServletRequest req) throws ServletException {
+        User user = userService.saveUserIfNotExists(userDto);
+        if(user == null) {
+            return "redirect:/register?error=already-exists";
+        }
+        req.login(user.getUsername(), userDto.getPassword());
+        return "redirect:/chat";
     }
 }
