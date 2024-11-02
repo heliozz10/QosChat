@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Collection;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,13 +22,22 @@ public class Chat {
     @Column(nullable = false)
     private String name;
 
+    //TODO: add password
 //    @Column
 //    private String password = null;
 
-    @OneToMany(mappedBy = "chat")
+    @OneToMany(mappedBy = "chat", fetch = FetchType.EAGER)
     private List<Message> messages;
 
     public Chat(String name) {
         this.name = name;
+    }
+
+    public void addMessage(Message message) {
+        messages.add(message);
+    }
+
+    public void addMessages(Collection<Message> messages) {
+        this.messages.addAll(messages);
     }
 }

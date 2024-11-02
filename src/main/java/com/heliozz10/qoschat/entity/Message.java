@@ -29,4 +29,11 @@ public class Message {
 
     @Column
     private String date;
+
+    public Message(User sender, Chat chat, String contents, String date) {
+        this.sender = sender;
+        this.chat = chat;
+        this.contents = contents;
+        this.date = date;
+    }
 }

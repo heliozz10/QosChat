@@ -19,7 +19,17 @@ stompClient.onConnect = (frame) => {
     setConnected(true);
     console.log('Connected: ' + frame);
     stompClient.subscribe("/topic/chat/" + currentChatId, (message) => {
-        receiveMessage(JSON.parse(message.body));
+        let data = JSON.parse(message.body);
+        switch(data.type) {
+            case "CHAT_SUBSCRIPTION":
+                $("#current-chat-name").text(`${data.name} (id: ${currentChatId})`);
+                $("#current-chat-name-container").show();
+                loadMessages(data.messages);
+                break;
+            case "CHAT_MESSAGE":
+                receiveMessage(JSON.parse(message.body));
+                break;
+        }
     }, {
         chatId: currentChatId
     });
@@ -47,6 +57,7 @@ function setConnected(connected) {
 function connect() {
     currentChatId = $("#chat-id-box").val();
     stompClient.activate();
+    console.log("test");
     setConnected(true);
 }
 
@@ -54,11 +65,13 @@ function disconnect() {
     stompClient.deactivate();
     currentChatId = "";
     setConnected(false);
+    $("#current-chat-name-container").hide();
     console.log("Disconnected");
 }
 
 function createChat() {
-    console.log("attempting...");
+    console.log("attempting to create a chat...");
+    stompClient.deactivate();
     $.ajax({
         url: "/create-chat",
         type: "POST",
@@ -83,12 +96,18 @@ function sendMessage() {
     });
 }
 
+function loadMessages(messages) {
+    for (let message of messages) {
+        receiveMessage(message);
+    }
+}
+
 function receiveMessage(message) {
     $("#chat").append(`
         <div class="message">
             <div class="message-info">
                 <div class="username">
-                    <h1>${message.sender.name}</h1>
+                    <h1>${message.senderName}</h1>
                 </div>
                 <div class="date">
                     <h1>${message.date}</h1>
