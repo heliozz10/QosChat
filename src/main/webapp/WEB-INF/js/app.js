@@ -27,11 +27,15 @@ stompClient.onConnect = (frame) => {
 
 stompClient.onWebSocketError = (error) => {
     console.error('Error with websocket', error);
+    stompClient.deactivate();
+    setConnected(false);
 };
 
 stompClient.onStompError = (frame) => {
     console.error('Broker reported error: ' + frame.headers['message']);
     console.error('Additional details: ' + frame.body);
+    stompClient.deactivate();
+    setConnected(false);
 };
 
 function setConnected(connected) {
@@ -42,11 +46,8 @@ function setConnected(connected) {
 
 function connect() {
     currentChatId = $("#chat-id-box").val();
-    $.get("/chat-exists?id=" + currentChatId, response => {
-        if(response.chatExists) {
-            stompClient.activate();
-        }
-    });
+    stompClient.activate();
+    setConnected(true);
 }
 
 function disconnect() {
@@ -70,13 +71,14 @@ function createChat() {
         success: response => {
             currentChatId = response.id;
             stompClient.activate();
+            setConnected(true);
         }
     })
 }
 
 function sendMessage() {
     stompClient.publish({
-        destination: "/app/send-message/" + currentChatId,
+        destination: "/app/send-message",
         body: JSON.stringify({'contents': $("#message-box").val()})
     });
 }

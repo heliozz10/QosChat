@@ -1,5 +1,6 @@
 package com.heliozz10.qoschat.security;
 
+import com.heliozz10.qoschat.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,9 +13,12 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    private final UserService userService;
+    private final AuthProvider authProvider;
+
+    public SecurityConfig(UserService userService, AuthProvider authProvider) {
+        this.userService = userService;
+        this.authProvider = authProvider;
     }
 
     @Bean
@@ -33,6 +37,8 @@ public class SecurityConfig {
                         .passwordParameter("password"))
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login"))
+                .userDetailsService(userService)
+                .authenticationProvider(authProvider)
                 .build();
     }
 }
