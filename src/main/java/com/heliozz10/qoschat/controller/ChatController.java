@@ -3,9 +3,7 @@ package com.heliozz10.qoschat.controller;
 import com.heliozz10.qoschat.content.chat.ChatSubscriptionResponse;
 import com.heliozz10.qoschat.content.chat.NewChatRequest;
 import com.heliozz10.qoschat.content.chat.NewChatResponse;
-import com.heliozz10.qoschat.content.chat.Sender;
 import com.heliozz10.qoschat.content.chat.message.ClientChatMessage;
-import com.heliozz10.qoschat.content.chat.message.MessageWrapper;
 import com.heliozz10.qoschat.content.chat.message.ServerChatMessage;
 import com.heliozz10.qoschat.entity.Chat;
 import com.heliozz10.qoschat.entity.Message;
@@ -19,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.security.core.Authentication;
@@ -73,10 +70,9 @@ public class ChatController {
     }
 
     @SubscribeMapping("/chat/{chatId}")
-    @SendTo("/topic/chat/{chatId}")
-    public ChatSubscriptionResponse handleChatSubscription(@DestinationVariable("chatId") Long chatId, Authentication auth) {
+    public void handleChatSubscription(@DestinationVariable("chatId") Long chatId, Authentication auth) {
         User user = (User) auth.getPrincipal();
         Chat chat = user.getCurrentChat();
-        return new ChatSubscriptionResponse(chat.getName(), chat.getMessages().stream().map(ServerChatMessage::new).toList());
+        template.convertAndSendToUser(user.getUsername(), "/queue/reply", new ChatSubscriptionResponse(chat.getName(), chat.getMessages().stream().map(ServerChatMessage::new).toList()));
     }
 }

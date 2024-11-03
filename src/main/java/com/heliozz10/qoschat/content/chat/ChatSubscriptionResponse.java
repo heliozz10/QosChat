@@ -11,7 +11,6 @@ import java.util.List;
 @Getter
 @Setter
 public class ChatSubscriptionResponse {
-    private final InternalMessageType type = InternalMessageType.CHAT_SUBSCRIPTION;
     private String name;
     private List<ServerChatMessage> messages;
 }

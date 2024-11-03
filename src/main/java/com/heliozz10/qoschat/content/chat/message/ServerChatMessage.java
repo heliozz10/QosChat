@@ -1,7 +1,5 @@
 package com.heliozz10.qoschat.content.chat.message;
 
-import com.heliozz10.qoschat.content.chat.InternalMessageType;
-import com.heliozz10.qoschat.content.chat.Sender;
 import com.heliozz10.qoschat.entity.Message;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,8 +14,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ServerChatMessage {
-    //this thing is used in the client to know what type of message it is
-    private final InternalMessageType type = InternalMessageType.CHAT_MESSAGE;
     private String senderName;
     private String contents;
     /**

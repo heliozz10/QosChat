@@ -1,4 +1,10 @@
-const stompClient = new StompJs.Client({
+//a channel to retrieve user specific data
+const stompUserClient = new StompJs.Client({
+    brokerURL: 'ws://' + window.location.host + '/websocket',
+});
+
+//a channel to subscribe to chats
+const stompChatClient = new StompJs.Client({
     brokerURL: 'ws://' + window.location.host + '/websocket',
 });
 
@@ -15,36 +21,49 @@ function getCookieValue(cookieName) {
     return null;
 }
 
-stompClient.onConnect = (frame) => {
+stompUserClient.onConnect = (frame) => {
+    console.log("Connected user channel: " + frame);
+    stompUserClient.subscribe("/user/queue/reply", (message) => {
+        let data = JSON.parse(message.body);
+        console.log(data);
+        $("#current-chat-name").text(`${data.name} (id: ${currentChatId})`);
+        $("#current-chat-name-container").show();
+        loadMessages(data.messages);
+    })
+};
+
+stompChatClient.onConnect = (frame) => {
     setConnected(true);
     console.log('Connected: ' + frame);
-    stompClient.subscribe("/topic/chat/" + currentChatId, (message) => {
+    stompChatClient.subscribe("/topic/chat/" + currentChatId, (message) => {
         let data = JSON.parse(message.body);
-        switch(data.type) {
-            case "CHAT_SUBSCRIPTION":
-                $("#current-chat-name").text(`${data.name} (id: ${currentChatId})`);
-                $("#current-chat-name-container").show();
-                loadMessages(data.messages);
-                break;
-            case "CHAT_MESSAGE":
-                receiveMessage(JSON.parse(message.body));
-                break;
-        }
+        receiveMessage(data);
     }, {
         chatId: currentChatId
     });
 };
 
-stompClient.onWebSocketError = (error) => {
+stompUserClient.onWebSocketError = (error) => {
     console.error('Error with websocket', error);
-    stompClient.deactivate();
+    stompUserClient.deactivate();
+};
+
+stompUserClient.onStompError = (frame) => {
+    console.error('Broker reported error: ' + frame.headers['message']);
+    console.error('Additional details: ' + frame.body);
+    stompUserClient.deactivate();
+};
+
+stompChatClient.onWebSocketError = (error) => {
+    console.error('Error with websocket', error);
+    stompChatClient.deactivate();
     setConnected(false);
 };
 
-stompClient.onStompError = (frame) => {
+stompChatClient.onStompError = (frame) => {
     console.error('Broker reported error: ' + frame.headers['message']);
     console.error('Additional details: ' + frame.body);
-    stompClient.deactivate();
+    stompChatClient.deactivate();
     setConnected(false);
 };
 
@@ -56,13 +75,14 @@ function setConnected(connected) {
 
 function connect() {
     currentChatId = $("#chat-id-box").val();
-    stompClient.activate();
+    stompUserClient.activate();
+    stompChatClient.activate();
     console.log("test");
     setConnected(true);
 }
 
 function disconnect() {
-    stompClient.deactivate();
+    stompChatClient.deactivate();
     currentChatId = "";
     setConnected(false);
     $("#current-chat-name-container").hide();
@@ -71,7 +91,7 @@ function disconnect() {
 
 function createChat() {
     console.log("attempting to create a chat...");
-    stompClient.deactivate();
+    stompChatClient.deactivate();
     $.ajax({
         url: "/create-chat",
         type: "POST",
@@ -83,14 +103,15 @@ function createChat() {
         },
         success: response => {
             currentChatId = response.id;
-            stompClient.activate();
+            stompUserClient.activate();
+            stompChatClient.activate();
             setConnected(true);
         }
     })
 }
 
 function sendMessage() {
-    stompClient.publish({
+    stompChatClient.publish({
         destination: "/app/send-message",
         body: JSON.stringify({'contents': $("#message-box").val()})
     });
@@ -130,4 +151,6 @@ $(function () {
     $( "#disconnect" ).click(() => disconnect());
     $( "#create-chat" ).click(() => createChat());
     $( "#send" ).click(() => sendMessage());
+
+    stompUserClient.activate();
 });

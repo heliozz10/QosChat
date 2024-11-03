@@ -43,7 +43,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic");
+        config.enableSimpleBroker("/topic", "/queue");
         config.setApplicationDestinationPrefixes("/app", "/topic");
     }
 
@@ -61,7 +61,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-                if(!accessor.getCommand().equals(StompCommand.SUBSCRIBE)) {
+                if(!accessor.getCommand().equals(StompCommand.SUBSCRIBE) || !accessor.getDestination().startsWith("/topic/chat/")) {
                     return message;
                 }
                 //get the user from the session
